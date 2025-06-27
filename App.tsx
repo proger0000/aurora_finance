@@ -1,3 +1,4 @@
+// App.tsx
 
 import React, { useState } from 'react';
 import { ICONS } from './constants';
@@ -12,6 +13,7 @@ import Family from './components/Family';
 import Login from './components/Login';
 import { useSettings } from './contexts/SettingsContext';
 import { useData } from './hooks/useData';
+import { useAuth } from './contexts/AuthContext'; // Импортируем хук useAuth
 
 type View = 'dashboard' | 'transactions' | 'reports' | 'goals' | 'garage' | 'ai' | 'settings' | 'family';
 
@@ -37,12 +39,14 @@ const NavItem: React.FC<{
 
 const App: React.FC = () => {
   const [activeView, setActiveView] = useState<View>('dashboard');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { t } = useSettings();
-  const data = useData(isLoggedIn); // Trigger data fetching only when logged in
+  const { session, signOut } = useAuth(); // Получаем сессию и функцию выхода из контекста
+  const isLoggedIn = !!session; // Пользователь в системе, если есть активная сессия
 
-  const handleLogout = () => {
-    setIsLoggedIn(false);
+  const data = useData(isLoggedIn);
+
+  const handleLogout = async () => {
+    await signOut();
     setActiveView('dashboard');
   };
 
@@ -63,8 +67,9 @@ const App: React.FC = () => {
     }
   };
   
-  if (!isLoggedIn) {
-      return <Login onLoginSuccess={() => setIsLoggedIn(true)} />;
+  // Если сессии нет, показываем компонент Login
+  if (!session) {
+      return <Login />;
   }
 
   return (

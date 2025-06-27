@@ -93,3 +93,11 @@ export interface FamilyMember {
     role: 'owner' | 'member';
     avatarUrl?: string;
 }
+
+export interface UserProfile {
+    id: string; // Связан с auth.users.id
+    theme: Theme;
+    language: Language;
+    currency: Currency;
+    updated_at: string;
+}

@@ -1,0 +1,21 @@
+/* index.css */
+
+/* Базовые директивы Tailwind v4 */
+@tailwind theme;
+@tailwind utilities;
+
+/* Здесь мы расширяем тему, добавляя наши кастомные цвета */
+@theme {
+  --colors-aura-accent: #00F5D4;
+  
+  --colors-aura-gray-100: #F0F2F5;
+  --colors-aura-gray-200: #D9DDE3;
+  --colors-aura-gray-300: #B8BEC9;
+  --colors-aura-gray-400: #8F96A3;
+  --colors-aura-gray-500: #697180;
+  --colors-aura-gray-600: #4D5566;
+  --colors-aura-gray-700: #384050;
+  --colors-aura-gray-800: #262C3A;
+  --colors-aura-gray-900: #171A21;
+  --colors-aura-gray-950: #0D0F14;
+}

@@ -1,6 +1,9 @@
+// contexts/SettingsContext.tsx
 
-import React, { createContext, useState, useEffect, useMemo, useContext } from 'react';
-import { Theme, Language, Currency } from '../types';
+import React, { createContext, useState, useEffect, useMemo, useContext, useCallback } from 'react';
+import { Theme, Language, Currency, UserProfile } from '../types';
+import { useAuth } from './AuthContext';
+import * as api from '../services/apiService';
 
 // The user-provided error is about resolving module specifiers.
 // In a browser-native ESM setup without a bundler, importing JSON files directly
@@ -36,6 +39,7 @@ const uk = {
 type Translations = typeof en;
 
 interface SettingsContextType {
+    isLoaded: boolean;
     theme: Theme;
     setTheme: (theme: Theme) => void;
     language: Language;
@@ -48,56 +52,71 @@ interface SettingsContextType {
 
 const translations: Record<Language, Translations> = { en, uk };
 
-const getFromLocalStorage = <T,>(key: string, defaultValue: T): T => {
-    try {
-        const item = window.localStorage.getItem(key);
-        return item ? JSON.parse(item) : defaultValue;
-    } catch (error) {
-        console.warn(`Error reading localStorage key “${key}”:`, error);
-        return defaultValue;
-    }
-};
-
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
 export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [theme, setThemeState] = useState<Theme>(() => 
-        getFromLocalStorage<Theme>('theme', window.matchMedia('(prefers-color-scheme: dark)').matches ? Theme.DARK : Theme.LIGHT)
-    );
-    const [language, setLanguage] = useState<Language>(() => getFromLocalStorage<Language>('language', 'en'));
-    const [currency, setCurrency] = useState<Currency>(() => getFromLocalStorage<Currency>('currency', 'USD'));
+    const { user } = useAuth(); // Получаем пользователя из AuthContext
+    const [isLoaded, setIsLoaded] = useState(false);
+    
+    // Дефолтные значения
+    const [theme, setThemeState] = useState<Theme>(Theme.DARK);
+    const [language, setLanguageState] = useState<Language>('uk');
+    const [currency, setCurrencyState] = useState<Currency>('UAH');
 
+    // Загрузка настроек из БД при входе пользователя
+    useEffect(() => {
+        const loadProfile = async () => {
+            if (user) {
+                const profile = await api.getUserProfile();
+                if (profile) {
+                    setThemeState(profile.theme);
+                    setLanguageState(profile.language);
+                    setCurrencyState(profile.currency);
+                }
+                // Если профиля нет (маловероятно из-за триггера),
+                // то используются дефолтные значения, установленные выше.
+                setIsLoaded(true);
+            }
+        };
+        loadProfile();
+    }, [user]);
+
+    // Обновление настроек с сохранением в БД
+    const updateProfile = useCallback(async (updates: Partial<UserProfile>) => {
+        if (user) {
+            await api.updateUserProfile(updates);
+        }
+    }, [user]);
+    
+    const setTheme = (newTheme: Theme) => {
+        setThemeState(newTheme);
+        updateProfile({ theme: newTheme });
+    };
+
+    const setLanguage = (newLanguage: Language) => {
+        setLanguageState(newLanguage);
+        updateProfile({ language: newLanguage });
+    }
+    
+    const setCurrency = (newCurrency: Currency) => {
+        setCurrencyState(newCurrency);
+        updateProfile({ currency: newCurrency });
+    }
+    
+    // Эффект для обновления CSS-класса темы
     useEffect(() => {
         const root = window.document.documentElement;
         root.classList.remove(Theme.LIGHT, Theme.DARK);
         root.classList.add(theme);
-        localStorage.setItem('theme', JSON.stringify(theme));
     }, [theme]);
-    
-    useEffect(() => {
-        localStorage.setItem('language', JSON.stringify(language));
-    }, [language]);
 
-    useEffect(() => {
-        localStorage.setItem('currency', JSON.stringify(currency));
-    }, [currency]);
-    
-    const setTheme = (newTheme: Theme) => {
-        setThemeState(newTheme);
-    };
-
+    // Функция перевода
     const t = (key: string, values?: Record<string, string>): string => {
         const keys = key.split('.');
         let result: any = translations[language];
         for (const k of keys) {
             result = result?.[k];
-            if (result === undefined) {
-                let fallbackResult: any = translations.en;
-                for (const fk of keys) {
-                    fallbackResult = fallbackResult?.[fk];
-                }
-                return fallbackResult || key;
-            }
+            if (result === undefined) return key; // Возвращаем ключ, если перевод не найден
         }
         
         let S = result as string || key;
@@ -109,16 +128,18 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         return S;
     };
     
-    const formatCurrency = (amount: number): string => {
+    // Функция форматирования валюты
+    const formatCurrency = useCallback((amount: number): string => {
         return new Intl.NumberFormat(language, {
             style: 'currency',
             currency: currency,
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
         }).format(amount);
-    };
+    }, [language, currency]);
 
     const value = useMemo(() => ({
+        isLoaded,
         theme,
         setTheme,
         language,
@@ -127,7 +148,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         currency,
         setCurrency,
         formatCurrency,
-    }), [theme, language, currency]);
+    }), [isLoaded, theme, language, currency, formatCurrency, t]);
 
     return (
         <SettingsContext.Provider value={value}>

@@ -1,8 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "experimentalDecorators": true,
-    "useDefineForClassFields": false,
+    "useDefineForClassFields": true, // Изменено для Vite
     "module": "ESNext",
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
@@ -10,10 +9,9 @@
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
+    "resolveJsonModule": true, // Добавлено для импорта JSON
     "isolatedModules": true,
-    "moduleDetection": "force",
     "noEmit": true,
-    "allowJs": true,
     "jsx": "react-jsx",
 
     /* Linting */
@@ -21,10 +19,10 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true,
 
-    "paths": {
-      "@/*" :  ["./*"]
-    }
-  }
+    /* Vite-специфичные типы */
+    "types": ["vite/client"] // <--- ВОТ КЛЮЧЕВОЕ ИЗМЕНЕНИЕ
+  },
+  "include": ["**/*.ts", "**/*.tsx"], // Указываем, какие файлы включать
+  "references": [{ "path": "./tsconfig.node.json" }]
 }

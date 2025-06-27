@@ -1,117 +1,135 @@
+// services/apiService.ts
 
-import { Account, Transaction, TransactionType, Goal, Car, Refueling, ServiceRecord, NewTransactionData, NewGoalData, Currency } from "../types";
+import { supabase } from './supabaseClient';
+import { Account, Transaction, Goal, Car, Refueling, ServiceRecord, NewTransactionData, NewGoalData, UserProfile } from "../types";
 
-// --- MOCK DATABASE ---
-let MOCK_ACCOUNTS: Account[] = [
-    { id: 'acc1', name: 'Main Bank', balance: 7850.55, currency: 'USD' },
-    { id: 'acc2', name: 'Savings', balance: 12340.00, currency: 'USD' },
-    { id: 'acc3', name: 'Cash', balance: 320.10, currency: 'UAH' },
-];
-
-let MOCK_TRANSACTIONS: Transaction[] = [
-    { id: 't1', type: TransactionType.EXPENSE, amount: 75.50, category: 'Groceries', accountId: 'acc1', date: '2023-10-26T10:00:00Z' },
-    { id: 't2', type: TransactionType.EXPENSE, amount: 12.00, category: 'Coffee', accountId: 'acc1', date: '2023-10-26T08:30:00Z' },
-    { id: 't3', type: TransactionType.INCOME, amount: 2500.00, category: 'Salary', accountId: 'acc1', date: '2023-10-25T09:00:00Z' },
-    { id: 't4', type: TransactionType.EXPENSE, amount: 250.00, category: 'Utilities', accountId: 'acc2', date: '2023-10-24T14:00:00Z' },
-    { id: 't5', type: TransactionType.EXPENSE, amount: 45.99, category: 'Restaurants', accountId: 'acc1', date: '2023-10-23T19:45:00Z' },
-    { id: 't6', type: TransactionType.EXPENSE, amount: 1200.00, category: 'Rent', accountId: 'acc1', date: '2023-10-20T12:00:00Z' },
-    { id: 't7', type: TransactionType.INCOME, amount: 9000.00, category: 'Freelance', accountId: 'acc3', date: '2023-10-18T18:00:00Z' },
-];
-
-let MOCK_GOALS: Goal[] = [
-    { id: 'g1', name: 'Vacation to Japan', currentAmount: 3500, targetAmount: 8000, endDate: '2024-07-01' },
-    { id: 'g2', name: 'New Laptop', currentAmount: 1200, targetAmount: 2000 },
-    { id: 'g3', name: 'Emergency Fund', currentAmount: 5000, targetAmount: 10000, endDate: '2025-01-01' },
-];
-
-let MOCK_CARS: Car[] = [{
-    id: 'c1',
-    make: 'Tesla',
-    model: 'Model Y',
-    year: 2023,
-    photoUrl: 'https://picsum.photos/seed/teslay/400/200'
-}];
-
-let MOCK_REFUELINGS: Refueling[] = [
-    { id: 'r1', carId: 'c1', date: '2023-10-01', mileage: 1500, liters: 40, pricePerLiter: 0.15 },
-    { id: 'r2', carId: 'c1', date: '2023-10-10', mileage: 1950, liters: 42, pricePerLiter: 0.16 },
-    { id: 'r3', carId: 'c1', date: '2023-10-22', mileage: 2400, liters: 38, pricePerLiter: 0.15 },
-];
-
-let MOCK_SERVICES: ServiceRecord[] = [
-    { id: 's1', carId: 'c1', date: '2023-09-15', mileage: 1000, type: 'Tire Rotation', partsCost: 0, laborCost: 50, notes: 'Standard rotation.' },
-    { id: 's2', carId: 'c1', date: '2023-10-20', mileage: 2350, type: 'Wiper Fluid Refill', partsCost: 5, laborCost: 0, notes: 'Topped up.' },
-];
-// --- END MOCK DATABASE ---
-
-const simulateDelay = (ms: number) => new Promise(res => setTimeout(res, ms));
+/**
+ * Вспомогательная функция для получения текущего пользователя.
+ */
+const getCurrentUser = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error("User not logged in.");
+    return user;
+}
 
 // --- API FUNCTIONS ---
 
 export const getAccounts = async (): Promise<Account[]> => {
-    await simulateDelay(200);
-    return JSON.parse(JSON.stringify(MOCK_ACCOUNTS));
+    const user = await getCurrentUser();
+    const { data, error } = await supabase.from('accounts').select('*').eq('user_id', user.id);
+    if (error) throw error;
+    return data || [];
 };
 
 export const getTransactions = async (): Promise<Transaction[]> => {
-    await simulateDelay(300);
-    return JSON.parse(JSON.stringify(MOCK_TRANSACTIONS));
+    const user = await getCurrentUser();
+    const { data, error } = await supabase.from('transactions').select('*').eq('user_id', user.id);
+    if (error) throw error;
+    return data || [];
 };
 
 export const getGoals = async (): Promise<Goal[]> => {
-    await simulateDelay(400);
-    return JSON.parse(JSON.stringify(MOCK_GOALS));
+    const user = await getCurrentUser();
+    const { data, error } = await supabase.from('goals').select('*').eq('user_id', user.id);
+    if (error) throw error;
+    return data || [];
 };
 
 export const getCars = async (): Promise<Car[]> => {
-    await simulateDelay(150);
-    return JSON.parse(JSON.stringify(MOCK_CARS));
+    const user = await getCurrentUser();
+    const { data, error } = await supabase.from('cars').select('*').eq('user_id', user.id);
+    if (error) throw error;
+    return data || [];
 };
 
 export const getRefuelings = async (): Promise<Refueling[]> => {
-    await simulateDelay(250);
-    return JSON.parse(JSON.stringify(MOCK_REFUELINGS));
+    const user = await getCurrentUser();
+    const { data, error } = await supabase.from('refuelings').select('*').eq('user_id', user.id);
+    if (error) throw error;
+    return data || [];
 };
 
 export const getServiceRecords = async (): Promise<ServiceRecord[]> => {
-    await simulateDelay(280);
-    return JSON.parse(JSON.stringify(MOCK_SERVICES));
+    const user = await getCurrentUser();
+    const { data, error } = await supabase.from('service_records').select('*').eq('user_id', user.id);
+    if (error) throw error;
+    return data || [];
 };
 
 export const addTransaction = async (data: NewTransactionData): Promise<Transaction> => {
-    await simulateDelay(500);
-    const newTransaction: Transaction = {
-        ...data,
-        id: `t${Date.now()}`
-    };
+    const user = await getCurrentUser();
+    const recordToInsert = { ...data, user_id: user.id };
     
-    // Update account balance
-    const account = MOCK_ACCOUNTS.find(acc => acc.id === data.accountId);
-    if (account) {
-        if (data.type === TransactionType.INCOME) {
-            account.balance += data.amount;
-        } else {
-            account.balance -= data.amount;
-        }
-    }
+    const { data: newTransaction, error } = await supabase
+        .from('transactions')
+        .insert(recordToInsert)
+        .select()
+        .single();
 
-    MOCK_TRANSACTIONS.push(newTransaction);
+    if (error) throw error;
     return newTransaction;
 };
 
 export const addGoal = async (data: NewGoalData): Promise<Goal> => {
-    await simulateDelay(500);
-    const newGoal: Goal = {
-        ...data,
-        id: `g${Date.now()}`,
-        currentAmount: 0,
-    };
-    MOCK_GOALS.push(newGoal);
+    const user = await getCurrentUser();
+    const recordToInsert = { ...data, user_id: user.id, currentAmount: 0 };
+
+    const { data: newGoal, error } = await supabase
+        .from('goals')
+        .insert(recordToInsert)
+        .select()
+        .single();
+
+    if (error) throw error;
     return newGoal;
 }
 
 export const deleteGoal = async (id: string): Promise<void> => {
-    await simulateDelay(500);
-    MOCK_GOALS = MOCK_GOALS.filter(g => g.id !== id);
-    return;
+    const user = await getCurrentUser();
+    const { error } = await supabase
+        .from('goals')
+        .delete()
+        .match({ id: id, user_id: user.id }); // Удаляем только если ID и user_id совпадают
+
+    if (error) throw error;
+};
+
+// --- ✅ НОВЫЕ ФУНКЦИИ ДЛЯ ПРОФИЛЯ ---
+
+/**
+ * Получает профиль (настройки) текущего пользователя.
+ */
+export const getUserProfile = async (): Promise<UserProfile | null> => {
+    const user = await getCurrentUser();
+    const { data, error } = await supabase
+        .from('user_profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single(); // .single() вернет один объект или null
+
+    if (error && error.code !== 'PGRST116') { // Игнорируем ошибку "не найдено строк"
+        console.error('Error fetching user profile:', error);
+        throw error;
+    }
+    return data;
+}
+
+/**
+ * Обновляет профиль (настройки) текущего пользователя.
+ */
+export const updateUserProfile = async (updates: Partial<UserProfile>): Promise<UserProfile> => {
+    const user = await getCurrentUser();
+    const profileUpdates = { ...updates, id: user.id, updated_at: new Date().toISOString() };
+
+    const { data, error } = await supabase
+        .from('user_profiles')
+        .upsert(profileUpdates) // .upsert() создаст или обновит запись
+        .select()
+        .single();
+
+    if (error) {
+        console.error('Error updating user profile:', error);
+        throw error;
+    }
+    return data;
 }
