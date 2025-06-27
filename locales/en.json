@@ -1,0 +1,131 @@
+
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "transactions": "Transactions",
+    "reports": "Reports",
+    "goals": "Goals",
+    "garage": "Garage",
+    "family": "Family",
+    "ai": "Aura AI",
+    "settings": "Settings",
+    "logout": "Logout"
+  },
+  "common": {
+    "save": "Save",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "delete": "Delete"
+  },
+  "login": {
+    "title": "Welcome to Aura Finance",
+    "subtitle": "Your personal financial mentor.",
+    "email": "Email Address",
+    "password": "Password",
+    "loginButton": "Login",
+    "signupPrompt": "Don't have an account?",
+    "signupLink": "Sign Up",
+    "guestButton": "Continue as Guest"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "totalBalance": "Total Balance",
+    "incomeMonth": "Income (Month)",
+    "expensesMonth": "Expenses (Month)",
+    "monthlySpending": "Monthly Spending",
+    "savingsGoals": "Savings Goals",
+    "toGo": "to go",
+    "accounts": "Accounts",
+    "recentTransactions": "Recent Transactions",
+    "noGoals": "No savings goals yet. Create one!",
+    "noTransactions": "No transactions recorded yet."
+  },
+  "transactions": {
+    "title": "Transactions",
+    "addIncome": "Add Income",
+    "addExpense": "Add Expense",
+    "date": "Date",
+    "category": "Category",
+    "account": "Account",
+    "amount": "Amount",
+    "form": {
+        "amount": "Amount",
+        "category": "Category (e.g., Groceries, Salary)",
+        "account": "Account",
+        "date": "Date",
+        "notes": "Notes"
+    }
+  },
+  "reports": {
+    "title": "Reports",
+    "export": "Export to Excel",
+    "incomeVsExpense": "Income vs. Expense",
+    "income": "Income",
+    "expenses": "Expenses",
+    "analyticsComingSoon": "Analytics (Coming Soon)",
+    "periodComparison": "Period Comparison",
+    "periodComparisonDesc": "Compare spending between this month and last.",
+    "budgetForecasting": "Budget Forecasting",
+    "budgetForecastingDesc": "Predict future balances based on your habits."
+  },
+  "goals": {
+    "title": "Savings Goals",
+    "newGoal": "New Goal",
+    "addGoalButton": "Add Goal",
+    "of": "of",
+    "complete": "complete",
+    "toGo": "to go",
+    "targetDate": "Target Date",
+    "noGoals": "You have no savings goals. Why not add one?",
+    "deleteConfirm": "Are you sure you want to delete the goal \"{{name}}\"?",
+    "form": {
+        "name": "Goal Name (e.g., Vacation to Japan)",
+        "targetAmount": "Target Amount",
+        "targetDate": "Target Date",
+        "optional": "Optional"
+    }
+  },
+  "garage": {
+    "title": "Garage",
+    "noCar": "No cars added to your garage yet.",
+    "totalCost": "Total Cost",
+    "costPerKm": "Cost / km",
+    "avgConsumption": "Avg. Consumption",
+    "monthlyCosts": "Monthly Costs",
+    "energyConsumption": "Energy Consumption",
+    "consumption": "Consumption",
+    "refuelingHistory": "Refueling History",
+    "serviceHistory": "Service History",
+    "fuel": "Fuel",
+    "service": "Service"
+  },
+  "family": {
+    "title": "Family",
+    "comingSoon": "Family sharing features are coming soon!",
+    "description": "Invite family members to manage shared accounts and budgets together."
+  },
+  "ai": {
+    "title": "Aura AI Assistant",
+    "initialGreeting": "Hello! I'm Aura, your personal financial mentor. How can I help you understand your finances today?",
+    "inputPlaceholder": "Ask about your spending, goals, or car expenses..."
+  },
+  "settings": {
+    "title": "Settings",
+    "appearance": {
+      "title": "Appearance",
+      "description": "Customize the look and feel of the application.",
+      "light": "Light",
+      "dark": "Dark"
+    },
+    "language": {
+      "title": "Language",
+      "description": "Choose the language for the application interface.",
+      "english": "English",
+      "ukrainian": "Ukrainian"
+    },
+    "currency": {
+      "title": "Currency",
+      "description": "Select your primary currency for all financial data."
+    }
+  }
+}
